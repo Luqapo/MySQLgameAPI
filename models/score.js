@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     category: DataTypes.STRING,
     score: DataTypes.INTEGER
   }, {});
-  Score.associate = function(models) {
+  Score.associate = models => {
     // associations can be defined here
     Score.belongsTo(models.User,{
       foreignKey: 'uid',

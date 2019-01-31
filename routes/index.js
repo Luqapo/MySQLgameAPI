@@ -12,6 +12,8 @@ module.exports = (app) => {
 
     app.get('/api/score/summary', scoreController.summary);
 
+    app.get('/api/score/category', scoreController.category);
+
     app.get('/api/score/delete/:scoreId', scoreController.delete);
 
     app.post('/api/auth/register', userController.register);

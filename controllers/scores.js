@@ -1,16 +1,18 @@
 const Score = require('../models').Score;
-const models = require('../models');
+const sequelize = require('../models').sequelize;
 
 module.exports = {
-    create(req, res) {
-        return Score
-            .create({
-                category: req.body.category,
-                score: req.body.score,
-                uid: req.body.userId
-            })
-            .then(score => res.status(201).send(score))
-            .catch(err => res.status(500).send(err));
+    async create(req, res) { 
+        try {
+            const score = await Score.create({
+                    category: req.body.category,
+                    score: req.body.score,
+                    uid: req.body.userId
+                })
+            res.status(201).send(score);
+        }catch(err) {
+            res.status(500).send(err);
+        }
     },
     async get(req, res) {
         try {
@@ -31,16 +33,14 @@ module.exports = {
                 res.status(500).send({message: 'Limit not set'});
         }
     },
-    delete(req, res) {
-        console.log(req.params.scoreId);
-        return Score    
-            .destroy({where: {id: req.params.scoreId}})
-            .then(score => {
-                res.status(200).send({message: 'Score deleted', score})
-            })
-            .catch(err => {
-                res.status(500).send({ message: 'Delete failed'});
-            });
+    async delete(req, res) {
+        console.log(req.params.scoreId); 
+        try {  
+            const destroyedScore = await Score.destroy({where: {id: req.params.scoreId}})
+            res.status(200).send({message: 'Score deleted', destroyedScore})    
+        }catch(err) {
+            res.status(500).send({ message: 'Delete failed'});
+        }
     },
     async summary(req,res) {
         console.log(req.query.userId)
@@ -50,7 +50,7 @@ module.exports = {
             attributes: [
                 'createdAt',
                 [
-                    models.sequelize.fn('MAX', models.sequelize.col('score')),
+                    sequelize.fn('MAX', sequelize.col('score')),
                     'max_score'
                 ]
             ]
@@ -60,7 +60,7 @@ module.exports = {
             attributes: [
                 'createdAt',
                 [
-                    models.sequelize.fn('AVG', models.sequelize.col('score')),
+                    sequelize.fn('AVG', sequelize.col('score')),
                     'avg_score'
                 ]
             ]
@@ -70,7 +70,7 @@ module.exports = {
             attributes: [
                 'createdAt',
                 [
-                    models.sequelize.fn('MIN', models.sequelize.col('score')),
+                    sequelize.fn('MIN', sequelize.col('score')),
                     'min_score'
                 ]
             ]
@@ -81,5 +81,21 @@ module.exports = {
             res.status(500).send({ message:'Err Find', err});
         }
 
+    },
+    async category(req, res) {
+        const category = req.query.category;
+        if(!category) {
+            return res.status(500).send({ message: 'Category nedded'});
+        }
+        try {
+            const scores = await Score.findAll({
+                where: { uid: req.query.userId,
+                category }
+            })
+        res.status(200).send(scores);
+        } catch (err) {
+            console.log(err);
+            res.status(500).send({ message: 'Error while finding category'});
+        }
     }
 };
