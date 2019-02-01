@@ -13,7 +13,8 @@ app.get('*', (req, res) => {
     res.status(200).send({ message: 'Welcome to the beginning of nothingness.'})
 });
 
-models.sequelize.sync()
+models.sequelize
+    .sync()
     .then(() => {
         app.listen(5000, () => {
             console.log('Server listen at port 5000');
