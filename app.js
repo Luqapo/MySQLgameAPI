@@ -6,7 +6,6 @@ const models = require('./models');
 const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./routes')(app);
 app.get('*', (req, res) => {

@@ -4,7 +4,7 @@ const sequelize = require('../models').sequelize;
 const makeQuery  = require('../utils/makeQuery');
 
 module.exports = {
-    async create(req, res) { 
+    async create(req, res, next) { 
         try {
             const score = await Score.create({
                     category: req.body.category,
@@ -25,7 +25,7 @@ module.exports = {
             next(err);
         }
     },
-    async delete(req, res) {
+    async delete(req, res, next) {
         console.log(req.params.scoreId); 
         try {  
             const destroyedScore = await Score.destroy({where: { id: req.params.scoreId,

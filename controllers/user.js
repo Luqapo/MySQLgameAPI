@@ -1,23 +1,23 @@
 const User = require('../models').User;
 
 module.exports = {
-    async register(req, res) {
+    async register(req, res, next) {
         console.log(req.body);
         try {
             const user = await User.create(req.body);
             return res.status(201).send(user);
         }catch (err) {
             console.log(err);
-            return res.status(500).send({message: 'Error while crating user'});
+            next(err);
         }
 
     },
-    async getUsers(req, res) {
+    async getUsers(req, res, next) {
         try {
             const users = await User.findAll();
             res.status(200).send(users);
         } catch (err) {
-            res.status(500).send({ message: 'Erron on the server'});
+            next(err);
         }
     }
 }
