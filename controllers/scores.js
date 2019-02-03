@@ -35,17 +35,20 @@ module.exports = {
             next(err);
         }
     },
-    async summary(req,res) {
+    async summary(req, res, next) {
         // in MySQl ----> SET GLOBAL sql_mode = '';
         try {
         const maxScore = await Score.findAll({
-            where: { uid: req.userId },
+            where: {
+                uid: req.userId
+            },
+            limit: 1,
             attributes: [
                 'createdAt',
-                [
-                    sequelize.fn('MAX', sequelize.col('score')),
-                    'max_score'
-                ]
+                'score'
+            ],
+            order: [
+                ['score', 'DESC']
             ]
         });
         const avargeScore = await Score.findAll({
@@ -59,13 +62,16 @@ module.exports = {
             ]
         });
         const minScore = await Score.findAll({
-            where: { uid: req.userId },
+            where: {
+                uid: req.userId
+            },
+            limit: 1,
             attributes: [
                 'createdAt',
-                [
-                    sequelize.fn('MIN', sequelize.col('score')),
-                    'min_score'
-                ]
+                'score'
+            ],
+            order: [
+                ['score', 'ASC']
             ]
         });
         return res.status(200).send({maxScore, avargeScore, minScore});

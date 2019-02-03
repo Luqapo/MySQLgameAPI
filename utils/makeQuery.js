@@ -1,7 +1,6 @@
 const checkSortQuery = require('./checkSortQuery');
 
 module.exports = (userId, query) => {
-    console.log(Object.keys(query).length === 0);
     if (Object.keys(query).length === 0) {
         return {
             where: {
