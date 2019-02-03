@@ -13,6 +13,13 @@ app.get('*', (req, res) => {
     res.status(200).send({ message: 'Welcome to the beginning of nothingness.'})
 });
 
+app.use((error, req, res, next) => {
+    const status = error.statusCode || 500;
+    const message = error.message;
+    console.log(message);
+    res.status(status).send({ message });
+})
+
 models.sequelize
     .sync()
     .then(() => {
