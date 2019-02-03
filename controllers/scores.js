@@ -1,6 +1,8 @@
 const Score = require('../models').Score;
 const sequelize = require('../models').sequelize;
 
+const makeQuery  = require('../utils/makeQuery');
+
 module.exports = {
     async create(req, res) { 
         try {
@@ -16,18 +18,22 @@ module.exports = {
     },
     async get(req, res) {
         try {
-            const limit = Number(req.query.limit);
-            if(!limit) {
-                const scores = await Score.findAll({
-                    where: { uid: req.userId },
-                })
-            return res.status(200).send(scores);
-            } 
-            const scores = await Score.findAll({
-                    where: { uid: req.userId },
-                    limit
-                })
+            const query = makeQuery(req.userId, req.query);
+            console.log(query);
+            const scores = await Score.findAll(query);
             res.status(200).send(scores);
+            // const limit = Number(req.query.limit);
+            // if(!limit) {
+            //     const scores = await Score.findAll({
+            //         where: { uid: req.userId },
+            //     })
+            // return res.status(200).send(scores);
+            // } 
+            // const scores = await Score.findAll({
+            //         where: { uid: req.userId },
+            //         limit
+            //     })
+            // res.status(200).send(scores);
         } catch(err)  {
                 console.log(err);
                 res.status(500).send({message: 'Limit not set'});
@@ -83,36 +89,36 @@ module.exports = {
         }
 
     },
-    async category(req, res) {
-        const category = req.query.category;
-        if(!category) {
-            return res.status(500).send({ message: 'Category nedded'});
-        }
-        try {
-            const scores = await Score.findAll({
-                where: { uid: req.userId,
-                category }
-            })
-        res.status(200).send(scores);
-        } catch (err) {
-            console.log(err);
-            res.status(500).send({ message: 'Error while finding category'});
-        }
-    },
-    async sort(req, res) {
-        const sort = req.query.sort;
-        if(!sort || !(sort === 'DESC' || sort === 'ASC')){
-           return res.status(500).send({ message: 'Wrong search param!'})
-        }
-        try {
-            const sortedScore = await Score.findAll({
-                where: { uid: req.userId },
-                order: [['updatedAt', sort]]
-            });
-            res.status(200).send(sortedScore);
-        } catch (err) {
-            console.log(err);
-            res.status(500).send({ message: 'Error while sorting score'});
-        }
-    }
+    // async category(req, res) {
+    //     const category = req.query.category;
+    //     if(!category) {
+    //         return res.status(500).send({ message: 'Category nedded'});
+    //     }
+    //     try {
+    //         const scores = await Score.findAll({
+    //             where: { uid: req.userId,
+    //             category }
+    //         })
+    //     res.status(200).send(scores);
+    //     } catch (err) {
+    //         console.log(err);
+    //         res.status(500).send({ message: 'Error while finding category'});
+    //     }
+    // },
+    // async sort(req, res) {
+    //     const sort = req.query.sort;
+    //     if(!sort || !(sort === 'DESC' || sort === 'ASC')){
+    //        return res.status(500).send({ message: 'Wrong search param!'})
+    //     }
+    //     try {
+    //         const sortedScore = await Score.findAll({
+    //             where: { uid: req.userId },
+    //             order: [['updatedAt', sort]]
+    //         });
+    //         res.status(200).send(sortedScore);
+    //     } catch (err) {
+    //         console.log(err);
+    //         res.status(500).send({ message: 'Error while sorting score'});
+    //     }
+    // }
 };
