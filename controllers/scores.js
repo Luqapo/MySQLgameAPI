@@ -59,7 +59,9 @@ module.exports = {
                     sequelize.fn('AVG', sequelize.col('score')),
                     'avg_score'
                 ]
-            ]
+            ],
+            group: ['createdAt'],
+            limit: 1
         });
         const minScore = await Score.findAll({
             where: {
