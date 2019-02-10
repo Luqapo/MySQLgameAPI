@@ -19,6 +19,7 @@ module.exports = {
     async get(req, res, next) {
         try {
             const query = makeQuery(req.userId, req.query);
+            console.log(query);
             const scores = await Score.findAll(query);
             res.status(200).send(scores);
         } catch(err)  {
