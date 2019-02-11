@@ -19,7 +19,6 @@ module.exports = {
     async get(req, res, next) {
         try {
             const query = makeQuery(req.userId, req.query);
-            console.log(query);
             const scores = await Score.findAll(query);
             res.status(200).send(scores);
         } catch(err)  {
@@ -27,7 +26,6 @@ module.exports = {
         }
     },
     async delete(req, res, next) {
-        console.log(req.params.scoreId); 
         try {  
             const destroyedScore = await Score.destroy({where: { id: req.params.scoreId,
                                                                  uid: req.userId }});
